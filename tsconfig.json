@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "lib": ["ES2015"],
+    "jsx": "preserve",
+    "jsxFactory": "h",
+    "jsxFragmentFactory": "Fragment"
+  }
+}
