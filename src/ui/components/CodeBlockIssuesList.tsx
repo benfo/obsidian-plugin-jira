@@ -43,7 +43,7 @@ const TableDisplay: FunctionComponent<{
         {results.issues.map((i) => (
           <tr>
             <td style="white-space:nowrap;">
-              <a href={`${issueURL.toString()}/${i.key}`}>{i.key}</a>
+              <a class="external-link" href={`${issueURL.toString()}/${i.key}`}>{i.key}</a>
             </td>
             <td>{i.fields.summary}</td>
           </tr>
