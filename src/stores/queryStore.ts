@@ -1,6 +1,6 @@
 import { actionFor, mapTemplate } from "nanostores";
 import { useStore } from "@nanostores/preact";
-import { useEffect } from "preact/hooks";
+import { Inputs, useEffect, useState } from "preact/hooks";
 import log from "loglevel";
 
 const logger = log.getLogger("queryStore");
@@ -10,6 +10,10 @@ type QueryValue = {
   status?: "loading" | "error" | "success";
   data?: any;
   error?: any;
+};
+
+type QueryOptions = {
+  enabled?: boolean;
 };
 
 const Query = mapTemplate<QueryValue>();
@@ -44,14 +48,20 @@ const queryData = actionFor(
   }
 );
 
-export function useQuery<T>(key: string | string[], queryFn: () => Promise<T>) {
+export function useQuery<T>(
+  key: string | string[],
+  queryFn: () => Promise<T>,
+  options: QueryOptions = { enabled: true }
+) {
+  const [enabled, setEnabled] = useState(options.enabled);
   const k: string[] = typeof key === "string" ? [key] : key;
   const query = Query(k.sort().join("-"));
   const { data, status, error } = useStore(query);
 
   useEffect(() => {
+    if (!enabled) return;
     queryData(query, queryFn);
-  }, []);
+  }, [enabled]);
 
-  return { data, status, error };
+  return { data, status, error, enabled, setEnabled };
 }

@@ -1,4 +1,4 @@
-import CodeBlockIssuesList from "./ui/components/CodeBlockIssuesList";
+import CodeBlockIssuesList from "./ui/CodeBlockIssuesList";
 import SettingsTab from "./ui/SettingsTab";
 import log from "loglevel";
 import { SettingsManager } from "./stores/settingStore";

@@ -1,11 +1,11 @@
 import dayjs from "dayjs";
 import { FunctionComponent } from "preact";
-import { withHttpClient } from ".";
-import { Issue, IssueFields, SearchResults } from "../../api";
-import { useMarkdownCodeBlockYaml } from "../../preact";
-import { useQuery } from "../../stores/queryStore";
-import { useJiraApi } from "../../tools";
-import Alert from "./Alert";
+import { withHttpClient } from "./components";
+import { Issue, IssueFields, SearchResults } from "../api";
+import { useMarkdownCodeBlockYaml } from "../preact";
+import { useQuery } from "../stores/queryStore";
+import { useJiraApi } from "../tools";
+import Alert from "./components/Alert";
 
 type BlockDisplay = "ol" | "ul" | "table" | string;
 
@@ -102,14 +102,17 @@ const CodeBlockIssuesList: FunctionComponent = () => {
     errors: codeBlockErrors,
   } = useMarkdownCodeBlockYaml<JiraCodeBlock>(BlockSettingsDefault);
   const api = useJiraApi();
-  const { data, error } = useQuery(
+  const { data, error: queryError } = useQuery(
     [codeBlockData.jql, ...codeBlockData.fields],
     () => {
-      return api.issues.search({
-        jql: codeBlockData.jql,
-        fields: codeBlockData.fields,
-      });
-    }
+      if (codeBlockValid) {
+        return api.issues.search({
+          jql: codeBlockData.jql,
+          fields: codeBlockData.fields,
+        });
+      }
+    },
+    { enabled: codeBlockValid }
   );
 
   if (!codeBlockValid) {
@@ -124,11 +127,12 @@ const CodeBlockIssuesList: FunctionComponent = () => {
       </Alert>
     );
   }
-  if (error) {
+
+  if (queryError) {
     return (
       <Alert variant="error">
         <Alert.Heading>Error</Alert.Heading>
-        {error.toString()}
+        {queryError.toString()}
       </Alert>
     );
   }
