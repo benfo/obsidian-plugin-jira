@@ -1,6 +1,6 @@
 import { parseYaml } from "obsidian";
 import { createContext, FunctionalComponent } from "preact";
-import { useContext } from "preact/hooks";
+import { useContext, useMemo } from "preact/hooks";
 
 export const MarkdownCodeBlockContext = createContext<string>(undefined);
 
@@ -25,14 +25,18 @@ export const useMarkdownCodeBlock = () => {
 
 export function useMarkdownCodeBlockYaml<S>(initial: S) {
   const source = useMarkdownCodeBlock();
-  const yaml = parseYaml(source);
-  let settings = initial;
-  if (yaml) {
-    for (const key in yaml) {
-      if (Object.prototype.hasOwnProperty.call(yaml, key)) {
-        settings[key] = yaml[key];
+  const settings = useMemo(() => {
+    const yaml = parseYaml(source);
+    let parsedSettings = JSON.parse(JSON.stringify(initial));
+    if (yaml) {
+      for (const key in yaml) {
+        if (Object.prototype.hasOwnProperty.call(yaml, key)) {
+          parsedSettings[key] = yaml[key];
+        }
       }
     }
-  }
+    return parsedSettings;
+  }, [source]);
+
   return settings;
 }

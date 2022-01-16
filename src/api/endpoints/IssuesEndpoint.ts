@@ -1,5 +1,5 @@
+import log, { Logger } from "loglevel";
 import { JiraApi } from "..";
-import { IHttpClient } from "../../http/HttpClient";
 
 export type WarningMessages = {
   warningMessages?: string[];
@@ -22,21 +22,36 @@ export type Issue = {
   fields: IssueFields;
 };
 
+export type Account = {
+  self: string;
+  accountId: string;
+  emailAddress: string;
+  displayName: string;
+  active: boolean;
+  timeZone: string;
+  accountType: string;
+  avatarUrls: Map<string, string>;
+};
+
 export type IssueFields = {
   summary?: string;
+  comment?: string;
+  assignee?: Account;
+  reporter?: Account;
 };
 
 export class IssuesEndpoint {
-  constructor(private jiraApi: JiraApi) {}
+  constructor(private jiraApi: JiraApi, private logger: Logger) {}
 
-  async search(jql: string) {
+  async search(options: { jql: string; fields?: (keyof IssueFields)[] }) {
+    this.logger.debug("Calling issues.search", options);
     const result = await this.jiraApi.client.get<SearchResults>(
       "/rest/api/3/search",
       {
         data: {
           validateQuery: "warn",
-          fields: "summary,comment",
-          jql: jql,
+          fields: options.fields?.join(","),
+          jql: options.jql,
         },
       }
     );

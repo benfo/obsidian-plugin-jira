@@ -1,6 +1,9 @@
 import { actionFor, mapTemplate } from "nanostores";
 import { useStore } from "@nanostores/preact";
 import { useEffect } from "preact/hooks";
+import log from "loglevel";
+
+const logger = log.getLogger("queryStore");
 
 type QueryValue = {
   id: string;
@@ -15,13 +18,21 @@ const queryData = actionFor(
   Query,
   "updateData",
   async (store, queryFn: () => Promise<any>) => {
-    const status = store.get().status;
-    if (status === "loading") {
+    const value = store.get();
+    if (value.status) {
+      logger.debug("Not running query because status has a value.", {
+        id: value.id,
+        status: value.status,
+      });
       return;
     }
 
     store.setKey("status", "loading");
     try {
+      logger.debug("Running query.", {
+        id: value.id,
+      });
+
       const data = await queryFn();
 
       store.setKey("data", data);
@@ -33,8 +44,9 @@ const queryData = actionFor(
   }
 );
 
-export function useQuery<T>(key: string, queryFn: () => Promise<T>) {
-  const query = Query(key);
+export function useQuery<T>(key: string | string[], queryFn: () => Promise<T>) {
+  let k: string[] = typeof key === "string" ? [key] : key;
+  const query = Query(k.join("-"));
   const { data, status, error } = useStore(query);
 
   useEffect(() => {

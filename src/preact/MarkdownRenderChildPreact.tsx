@@ -1,4 +1,4 @@
-import { ComponentChild, render } from "preact";
+import { ComponentChild, FunctionComponent, render } from "preact";
 import {
   MarkdownPostProcessorContext,
   MarkdownRenderChild,
@@ -20,7 +20,8 @@ export default class MarkdownRenderChildPreact extends MarkdownRenderChild {
   onload(): void {
     render(
       <PluginProvider plugin={this.plugin}>
-        <MarkdownCodeBlockProvider source={this.source} children={this.vnode} />
+        <MarkdownCodeBlockProvider source={this.source} children={this.vnode}>
+        </MarkdownCodeBlockProvider>
       </PluginProvider>,
       this.containerEl
     );

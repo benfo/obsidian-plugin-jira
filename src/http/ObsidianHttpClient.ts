@@ -12,7 +12,6 @@ export default class ObsidianHttpClient implements IHttpClient {
 
   async request<T>(options: Partial<HttpClientOptions>): Promise<T> {
     const ops = { ...DefaultHttpClientOptions, ...this.options, ...options };
-
     const url = ops.baseURL
       ? new URL(options.url, ops.baseURL)
       : new URL(options.url);
