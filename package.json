@@ -2,7 +2,6 @@
   "name": "obsidian-plugin-jira",
   "private": true,
   "version": "0.0.1",
-  "description": "",
   "scripts": {
     "build": "node build/index.js prod",
     "dev": "node build/index.js dev"

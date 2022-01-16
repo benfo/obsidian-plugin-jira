@@ -1,0 +1,1 @@
+# Obsidian Plugin for Jira

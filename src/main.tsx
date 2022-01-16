@@ -1,13 +1,10 @@
-import { Plugin } from "obsidian";
 import CodeBlockIssuesList from "./ui/components/CodeBlockIssuesList";
-import MarkdownRenderChildPreact from "./renderer/MarkdownRenderChildPreact";
 import SettingsTab from "./ui/SettingsTab";
 import log from "loglevel";
 import { SettingsManager } from "./stores/settingStore";
-import { renderModal } from "./renderer/ModalRenderer";
-import { usePlugin } from "./tools";
+import { PreactPlugin } from "./preact";
 
-export default class JiraPlugin extends Plugin {
+export default class JiraPlugin extends PreactPlugin {
   settingsManager: SettingsManager;
 
   async onload() {
@@ -17,11 +14,7 @@ export default class JiraPlugin extends Plugin {
 
     this.settingsManager = new SettingsManager(this);
 
-    this.registerMarkdownCodeBlockProcessor("jira", (source, el, ctx) => {
-      ctx.addChild(
-        new MarkdownRenderChildPreact(el, source, () => <CodeBlockIssuesList />)
-      );
-    });
+    this.registerPreactMarkdownCodeBlockProcessor("jira", <CodeBlockIssuesList />);
 
     this.addSettingTab(new SettingsTab(this.app, this));
   }

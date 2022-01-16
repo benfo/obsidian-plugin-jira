@@ -1,6 +1,6 @@
-import { App, Plugin, Modal } from "obsidian";
+import { Plugin, Modal } from "obsidian";
 import { ComponentChild, render } from "preact";
-import { PluginProvider } from "../tools";
+import { PluginProvider } from "./PluginProvider";
 
 export default class ModalRenderer extends Modal {
   constructor(vnode: ComponentChild, title: string, plugin: Plugin) {

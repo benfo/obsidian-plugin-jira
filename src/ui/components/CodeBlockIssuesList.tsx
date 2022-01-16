@@ -1,8 +1,10 @@
 import { FunctionComponent } from "preact";
 import { withHttpClient } from ".";
 import { SearchResults } from "../../api";
+import { useMarkdownCodeBlockYaml } from "../../preact";
 import { useQuery } from "../../stores/queryStore";
-import { useJiraApi, useMarkdownCodeBlockYaml } from "../../tools";
+import { useJiraApi } from "../../tools";
+import Alert from "./Alert";
 
 type BlockDisplay = "ol" | "ul" | "table" | string;
 
@@ -43,7 +45,9 @@ const TableDisplay: FunctionComponent<{
         {results.issues.map((i) => (
           <tr>
             <td style="white-space:nowrap;">
-              <a class="external-link" href={`${issueURL.toString()}/${i.key}`}>{i.key}</a>
+              <a class="external-link" href={`${issueURL.toString()}/${i.key}`}>
+                {i.key}
+              </a>
             </td>
             <td>{i.fields.summary}</td>
           </tr>
@@ -67,7 +71,11 @@ const CodeBlockIssuesList: FunctionComponent = () => {
   }
 
   if (!data) {
-    return <span>Loading...</span>;
+    return (
+      <Alert variant="secondary">
+        <Alert.Heading>Loading</Alert.Heading>Please wait while fetching data...
+      </Alert>
+    );
   }
 
   if (data.warningMessages) {
@@ -86,9 +94,9 @@ const CodeBlockIssuesList: FunctionComponent = () => {
   }
 
   return (
-    <div>
-      <pre>as: {codeBlock.display}</pre> not supported
-    </div>
+    <p>
+      <pre>display: {codeBlock.display}</pre> not supported
+    </p>
   );
 };
 
