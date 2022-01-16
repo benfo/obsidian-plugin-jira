@@ -1,4 +1,4 @@
-import log, { Logger } from "loglevel";
+import { Logger } from "loglevel";
 import { JiraApi } from "..";
 
 export type WarningMessages = {
@@ -33,11 +33,40 @@ export type Account = {
   avatarUrls: Map<string, string>;
 };
 
+export type Comment = {
+  author: Account;
+  body: any; //TODO: this is a complicated structure and will have to see if there is a parser for it
+  created: string;
+  id: string;
+  jsdPublish: boolean;
+  self: string;
+  updateAuthor: Account;
+  updated: string;
+};
+
+export type CommentField = {
+  comments: Comment[];
+  maxResults: number;
+  self: string;
+  startAt: number;
+  total: number;
+};
+
+export type Priority = {
+  iconUrl: string;
+  id: string;
+  name: string;
+  self: string;
+};
+
 export type IssueFields = {
   summary?: string;
   comment?: string;
   assignee?: Account;
   reporter?: Account;
+  priority?: Priority;
+  updated?: string;
+  created?: string;
 };
 
 export class IssuesEndpoint {

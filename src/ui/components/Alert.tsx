@@ -14,7 +14,10 @@ const styles = {
     primary: { backgroundColor: "var(--background-primary)" },
     secondary: { backgroundColor: "var(--background-secondary)" },
     success: { backgroundColor: "var(--background-modifier-success)" },
-    error: { backgroundColor: "var(--background-modifier-error)", color: "var(--text-on-accent)" },
+    error: {
+      backgroundColor: "var(--background-modifier-error)",
+      color: "var(--text-on-accent)",
+    },
   },
   heading: {
     marginTop: 0,

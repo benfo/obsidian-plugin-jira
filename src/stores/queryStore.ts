@@ -45,8 +45,8 @@ const queryData = actionFor(
 );
 
 export function useQuery<T>(key: string | string[], queryFn: () => Promise<T>) {
-  let k: string[] = typeof key === "string" ? [key] : key;
-  const query = Query(k.join("-"));
+  const k: string[] = typeof key === "string" ? [key] : key;
+  const query = Query(k.sort().join("-"));
   const { data, status, error } = useStore(query);
 
   useEffect(() => {

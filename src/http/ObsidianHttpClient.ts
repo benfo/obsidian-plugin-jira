@@ -2,7 +2,9 @@ import { encode } from "js-base64";
 import { request, RequestParam } from "obsidian";
 import { DefaultHttpClientOptions } from ".";
 import { HttpClientOptions, IHttpClient } from "./HttpClient";
+import log from "loglevel";
 
+const logger = log.getLogger("ObsidianHttpClient");
 export default class ObsidianHttpClient implements IHttpClient {
   constructor(readonly options?: Partial<HttpClientOptions>) {}
 
@@ -34,8 +36,11 @@ export default class ObsidianHttpClient implements IHttpClient {
     };
 
     try {
+      logger.debug("Make http request.", requestParam);
       const result = await request(requestParam);
-      return JSON.parse(result) as T;
+      const json = JSON.parse(result) as T;
+      logger.debug("Response", json);
+      return json;
     } catch (error) {
       console.error(error);
       throw error;

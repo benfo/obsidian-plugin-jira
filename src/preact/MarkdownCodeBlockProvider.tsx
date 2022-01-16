@@ -1,3 +1,4 @@
+import Ajv, { Schema } from "ajv";
 import { parseYaml } from "obsidian";
 import { createContext, FunctionalComponent } from "preact";
 import { useContext, useMemo } from "preact/hooks";
@@ -23,19 +24,48 @@ export const useMarkdownCodeBlock = () => {
   return context;
 };
 
-export function useMarkdownCodeBlockYaml<S>(initial: S) {
+type CodeBlockData<T> = {
+  data: T;
+  valid: boolean;
+  errors?: { field: string; message: string }[];
+};
+
+const jiraCodeBlockSchema: Schema = {
+  type: "object",
+  properties: {
+    jql: { type: "string" },
+    display: { type: "string", enum: ["table", "ul", "ol"] },
+    fields: { type: "array", items: { type: "string" } },
+  },
+  required: ["jql"],
+  additionalProperties: false,
+};
+
+export function useMarkdownCodeBlockYaml<T>(initial: T): CodeBlockData<T> {
   const source = useMarkdownCodeBlock();
-  const settings = useMemo(() => {
-    const yaml = parseYaml(source);
+  const settings = useMemo<CodeBlockData<T>>(() => {
+    const codeBlockData = parseYaml(source);
+
     let parsedSettings = JSON.parse(JSON.stringify(initial));
-    if (yaml) {
-      for (const key in yaml) {
-        if (Object.prototype.hasOwnProperty.call(yaml, key)) {
-          parsedSettings[key] = yaml[key];
+    if (codeBlockData) {
+      for (const key in codeBlockData) {
+        if (Object.prototype.hasOwnProperty.call(codeBlockData, key)) {
+          parsedSettings[key] = codeBlockData[key];
         }
       }
     }
-    return parsedSettings;
+    const ajv = new Ajv();
+    const validate = ajv.compile(jiraCodeBlockSchema);
+    const valid = validate(codeBlockData);
+    if (!valid) console.log("Code block validation errors.", validate.errors);
+    const data: CodeBlockData<T> = {
+      data: parsedSettings,
+      errors: validate.errors?.map((error) => {
+        return { field: error.instancePath.substring(1), message: error.message };
+      }),
+      valid: valid,
+    };
+    return data;
   }, [source]);
 
   return settings;

@@ -1,5 +1,5 @@
+import dayjs from "dayjs";
 import { FunctionComponent } from "preact";
-import { useEffect, useState } from "preact/hooks";
 import { withHttpClient } from ".";
 import { Issue, IssueFields, SearchResults } from "../../api";
 import { useMarkdownCodeBlockYaml } from "../../preact";
@@ -14,7 +14,6 @@ type JiraCodeBlock = {
   display: BlockDisplay;
   fields?: (keyof IssueFields)[];
 };
-
 const BlockSettingsDefault: JiraCodeBlock = {
   display: "table",
   fields: ["summary"],
@@ -40,12 +39,19 @@ const FieldRenderer: FunctionComponent<{
 }> = ({ issue, field }) => {
   switch (field) {
     case "assignee":
-      return <>{issue.fields.assignee.displayName}</>;
     case "reporter":
-      return <>{issue.fields.reporter.displayName}</>;
+      return <>{issue.fields[field].displayName}</>;
+    case "comment":
+      return <>{issue.fields.comment}</>;
     case "summary":
+      return <>{issue.fields.summary}</>;
+    case "priority":
+      return <>{issue.fields.priority.name}</>;
+    case "created":
+    case "updated":
+      return <>{dayjs(issue.fields[field]).format("DD/MMM/YYYY")}</>;
     default:
-      return <>{issue.fields[field]}</>;
+      return <>{JSON.stringify(issue.fields[field])}</>;
   }
 };
 
@@ -90,27 +96,41 @@ const TableDisplay: FunctionComponent<{
 };
 
 const CodeBlockIssuesList: FunctionComponent = () => {
-  const codeBlock =
-    useMarkdownCodeBlockYaml<JiraCodeBlock>(BlockSettingsDefault);
+  const {
+    data: codeBlockData,
+    valid: codeBlockValid,
+    errors: codeBlockErrors,
+  } = useMarkdownCodeBlockYaml<JiraCodeBlock>(BlockSettingsDefault);
   const api = useJiraApi();
-  const { data, error } = useQuery([codeBlock.jql, ...codeBlock.fields], () => {
-    return api.issues.search({
-      jql: codeBlock.jql,
-      fields: codeBlock.fields,
-    });
-  });
-  // const [data, setData] = useState<SearchResults | undefined>(undefined);
-  // useEffect(() => {
-  //   api.issues
-  //     .search({
-  //       jql: codeBlock.jql,
-  //       fields: codeBlock.fields,
-  //     })
-  //     .then((data) => setData(data));
-  // }, []);
+  const { data, error } = useQuery(
+    [codeBlockData.jql, ...codeBlockData.fields],
+    () => {
+      return api.issues.search({
+        jql: codeBlockData.jql,
+        fields: codeBlockData.fields,
+      });
+    }
+  );
 
+  if (!codeBlockValid) {
+    return (
+      <Alert variant="error">
+        <Alert.Heading>Code Block Error</Alert.Heading>
+        {codeBlockErrors
+          .map((error) =>
+            [error.field, error.message].filter((v) => !!v).join(": ")
+          )
+          .join("\n")}
+      </Alert>
+    );
+  }
   if (error) {
-    return <span>{error.toString()}</span>;
+    return (
+      <Alert variant="error">
+        <Alert.Heading>Error</Alert.Heading>
+        {error.toString()}
+      </Alert>
+    );
   }
 
   if (!data) {
@@ -122,29 +142,31 @@ const CodeBlockIssuesList: FunctionComponent = () => {
   }
 
   if (data.warningMessages) {
-    return <span>{data.warningMessages.join("\n")}</span>;
+    <Alert.Heading>Error</Alert.Heading>;
+    return <Alert variant="error">{data.warningMessages.join("\n")}</Alert>;
   }
   if (data.errorMessages) {
-    return <span>{data.errorMessages.join("\n")}</span>;
+    <Alert.Heading>Error</Alert.Heading>;
+    return <Alert variant="error">{data.errorMessages.join("\n")}</Alert>;
   }
 
-  if (codeBlock.display === "ol" || codeBlock.display === "ul") {
-    return <ListDisplay results={data} display={codeBlock.display} />;
+  if (codeBlockData.display === "ol" || codeBlockData.display === "ul") {
+    return <ListDisplay results={data} display={codeBlockData.display} />;
   }
 
-  if (codeBlock.display === "table") {
+  if (codeBlockData.display === "table") {
     return (
       <TableDisplay
         results={data}
         baseURL={api.baseURL}
-        blockSettings={codeBlock}
+        blockSettings={codeBlockData}
       />
     );
   }
 
   return (
     <p>
-      <pre>display: {codeBlock.display}</pre> not supported
+      <pre>display: {codeBlockData.display}</pre> not supported
     </p>
   );
 };

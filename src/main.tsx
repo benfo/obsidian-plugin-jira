@@ -9,6 +9,7 @@ const defaultLogLevel = process.env.BUILD === "prod" ? "info" : "debug";
 log.setDefaultLevel(defaultLogLevel);
 log.getLogger("queryStore").setDefaultLevel(defaultLogLevel);
 log.getLogger("JiraApi").setDefaultLevel(defaultLogLevel);
+log.getLogger("ObsidianHttpClient").setDefaultLevel(defaultLogLevel);
 
 export default class JiraPlugin extends PreactPlugin {
   settingsManager: SettingsManager;
