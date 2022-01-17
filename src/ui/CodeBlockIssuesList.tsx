@@ -50,6 +50,8 @@ const FieldRenderer: FunctionComponent<{
     case "created":
     case "updated":
       return <>{dayjs(issue.fields[field]).format("DD/MMM/YYYY")}</>;
+    case "timetracking":
+      return <>{issue.fields.timetracking.timeSpent}</>;
     default:
       return <>{JSON.stringify(issue.fields[field])}</>;
   }

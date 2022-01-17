@@ -60,6 +60,13 @@ export type Priority = {
   self: string;
 };
 
+export type TimeTracking = {
+  remainingEstimate: string;
+  remainingEstimateSeconds: number;
+  timeSpent: string;
+  timeSpentSeconds: number;
+};
+
 export type IssueFields = {
   summary?: string;
   comment?: string;
@@ -68,6 +75,7 @@ export type IssueFields = {
   priority?: Priority;
   updated?: string;
   created?: string;
+  timetracking?: TimeTracking;
 };
 
 export class IssuesEndpoint {
