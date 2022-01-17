@@ -48,14 +48,18 @@ const queryData = actionFor(
   }
 );
 
+export function generateKey(keys: string[]) {
+  return keys.sort().join("-");
+}
+
 export function useQuery<T>(
   key: string | string[],
   queryFn: () => Promise<T>,
   options: QueryOptions = { enabled: true }
 ) {
   const [enabled, setEnabled] = useState(options.enabled);
-  const k: string[] = typeof key === "string" ? [key] : key;
-  const query = Query(k.sort().join("-"));
+  const keys: string[] = typeof key === "string" ? [key] : key;
+  const query = Query(generateKey(keys));
   const { data, status, error } = useStore(query);
 
   useEffect(() => {
