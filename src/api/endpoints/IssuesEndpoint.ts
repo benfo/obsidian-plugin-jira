@@ -9,6 +9,7 @@ export type WarningMessages = {
 export type SearchResults = {
   expand: string;
   issues: Issue[];
+  names?: Record<string, string>;
   maxResults: number;
   startAt: number;
   total: number;
@@ -81,6 +82,7 @@ export class IssuesEndpoint {
           validateQuery: "warn",
           fields: options.fields?.join(","),
           jql: options.jql,
+          expand: "names",
         },
       }
     );

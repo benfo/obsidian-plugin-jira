@@ -66,9 +66,10 @@ const TableDisplay: FunctionComponent<{
       <thead>
         <tr>
           <th style={{ whiteSpace: "nowrap" }}>Key</th>
-          {blockSettings.fields?.map((field) => (
-            <th style={{ textTransform: "capitalize" }}>{field}</th>
-          ))}
+          {blockSettings.fields?.map((field) => {
+            const displayName = results.names ? results.names[field] : field;
+            return <th>{displayName ?? `${field}`}</th>;
+          })}
         </tr>
       </thead>
 
