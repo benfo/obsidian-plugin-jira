@@ -1,7 +1,8 @@
-import { FunctionalComponent } from "preact";
+import { ComponentChildren, FunctionalComponent } from "preact";
 
 type AlertProps = {
   variant?: "primary" | "secondary" | "success" | "error";
+  children: ComponentChildren;
 };
 
 const styles = {
@@ -24,14 +25,15 @@ const styles = {
   },
 };
 
-const AlertHeading: FunctionalComponent = ({ children }) => {
+type AlartHeadingProps = {
+  children: ComponentChildren;
+};
+
+const AlertHeading = ({ children }: AlartHeadingProps) => {
   return <h3 style={styles.heading}>{children}</h3>;
 };
 
-const Alert: FunctionalComponent<AlertProps> = ({
-  children,
-  variant = "secondary",
-}) => {
+const Alert = ({ children, variant = "secondary" }: AlertProps) => {
   const style = {
     ...styles.base,
     ...styles.variants[variant],

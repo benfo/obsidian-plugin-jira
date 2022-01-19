@@ -4,7 +4,7 @@ const options = {
   entryPoints: ["src/main.tsx"],
   bundle: true,
   outfile: "main.js",
-  external: ["obsidian"],
+  external: ["obsidian", "prismjs"],
   format: "cjs",
   inject: ["build/preact-shim.ts"],
   define: {

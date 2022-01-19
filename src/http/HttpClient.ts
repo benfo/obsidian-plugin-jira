@@ -17,7 +17,7 @@ export type HttpClientOptions = {
     username: string;
     password: string;
   };
-  data: string[][] | Record<string, string> | string;
+  data: string[][] | Record<string, string | undefined> | string;
 };
 
 export const DefaultHttpClientOptions: Partial<HttpClientOptions> = {

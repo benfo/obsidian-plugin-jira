@@ -1,9 +1,9 @@
 import { actionFor, mapTemplate } from "nanostores";
 import { useStore } from "@nanostores/preact";
-import { Inputs, useEffect, useState } from "preact/hooks";
-import log from "loglevel";
+import { useEffect, useState } from "preact/hooks";
+import { getLogger } from "loglevel";
 
-const logger = log.getLogger("queryStore");
+const logger = getLogger("queryStore");
 
 type QueryValue = {
   id: string;
@@ -40,11 +40,12 @@ const queryData = actionFor(
       const data = await queryFn();
 
       store.setKey("data", data);
+      store.setKey("status", "success");
     } catch (error) {
       store.setKey("error", error);
       store.setKey("status", "error");
+      store.setKey("data", undefined);
     }
-    store.setKey("status", "success");
   }
 );
 

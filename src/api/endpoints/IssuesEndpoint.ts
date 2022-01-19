@@ -67,22 +67,52 @@ export type TimeTracking = {
   timeSpentSeconds: number;
 };
 
+export type IssueType = {
+  self: string;
+  id: string;
+  description: string;
+  iconUrl: string;
+  name: string;
+  subtask: boolean;
+  hierarchyLevel: number;
+  avatarId?: number;
+};
+export type Status = {
+  self: string;
+  description: string;
+  iconUrl: string;
+  name: string;
+  id: string;
+  statusCategory: {
+    self: string;
+    id: number;
+    key: string;
+    colorName: string;
+    name: string;
+  };
+};
 export type IssueFields = {
   summary?: string;
   comment?: string;
   assignee?: Account;
   reporter?: Account;
+  creator?: Account;
   priority?: Priority;
   updated?: string;
   created?: string;
   timetracking?: TimeTracking;
+  issuetype?: IssueType;
+  status: Status;
 };
+
+type seachOptions = { jql?: string; fields?: (keyof IssueFields)[] };
 
 export class IssuesEndpoint {
   constructor(private jiraApi: JiraApi, private logger: Logger) {}
 
-  async search(options: { jql: string; fields?: (keyof IssueFields)[] }) {
+  async search(options: seachOptions) {
     this.logger.debug("Calling issues.search", options);
+
     const result = await this.jiraApi.client.get<SearchResults>(
       "/rest/api/3/search",
       {

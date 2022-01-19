@@ -1,5 +1,5 @@
 import { ObsidianHttpClient, DefaultHttpClientOptions } from "../../http";
-import { HttpClientProvider } from "../../http/HttpClientProvider";
+import { HttpClientProvider } from "../../preact";
 
 function withHttpClient(WrappedComponent: any) {
   const client = new ObsidianHttpClient(DefaultHttpClientOptions);

@@ -15,8 +15,8 @@ export default class ObsidianHttpClient implements IHttpClient {
   async request<T>(options: Partial<HttpClientOptions>): Promise<T> {
     const ops = { ...DefaultHttpClientOptions, ...this.options, ...options };
     const url = ops.baseURL
-      ? new URL(options.url, ops.baseURL)
-      : new URL(options.url);
+      ? new URL(options.url ?? "", ops.baseURL)
+      : new URL(options.url ?? "");
     if (ops.data) {
       const params = new URLSearchParams(JSON.parse(JSON.stringify(ops.data)));
       url.search = params.toString();

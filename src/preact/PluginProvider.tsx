@@ -2,7 +2,7 @@ import { Plugin } from "obsidian";
 import { createContext, FunctionalComponent } from "preact";
 import { useContext } from "preact/hooks";
 
-export const PluginContext = createContext<Plugin>(undefined);
+export const PluginContext = createContext<Plugin | undefined>(undefined);
 
 export const PluginProvider: FunctionalComponent<{ plugin: Plugin }> = ({
   children,

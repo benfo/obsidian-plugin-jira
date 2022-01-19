@@ -1,4 +1,3 @@
-import { cleanStores, keepMount } from "nanostores";
 import { generateKey } from "../../src/stores/queryStore";
 
 describe("generateKey", () => {

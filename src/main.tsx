@@ -1,21 +1,18 @@
-import CodeBlockIssuesList from "./ui/CodeBlockIssuesList";
 import SettingsTab from "./ui/SettingsTab";
-import log from "loglevel";
+import { getLogger } from "loglevel";
 import { SettingsManager } from "./stores/settingStore";
 import { PreactPlugin } from "./preact";
+import CodeBlockIssuesList from "./ui/CodeBlockIssuesList/CodeBlockIssuesList";
+import { setLogLevels } from "./logging";
 
-// Set up logging
-const defaultLogLevel = process.env.BUILD === "prod" ? "info" : "debug";
-log.setDefaultLevel(defaultLogLevel);
-log.getLogger("queryStore").setDefaultLevel(defaultLogLevel);
-log.getLogger("JiraApi").setDefaultLevel(defaultLogLevel);
-log.getLogger("ObsidianHttpClient").setDefaultLevel(defaultLogLevel);
+const logger = getLogger("JiraPlugin");
 
 export default class JiraPlugin extends PreactPlugin {
-  settingsManager: SettingsManager;
-
+  settingsManager?: SettingsManager;
   async onload() {
-    log.info("Loading Jira plugin");
+    setLogLevels();
+
+    logger.info("Loading Jira plugin");
 
     this.settingsManager = new SettingsManager(this);
 
@@ -28,7 +25,7 @@ export default class JiraPlugin extends PreactPlugin {
   }
 
   unload(): void {
-    this.settingsManager.unload();
-    log.info("Unloading Jira plugin");
+    this.settingsManager?.unload();
+    logger.info("Unloading Jira plugin");
   }
 }
