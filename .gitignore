@@ -6,6 +6,3 @@
 !.yarn/sdks
 !.yarn/versions
 node_modules/*
-
-/data.json
-/main.js
